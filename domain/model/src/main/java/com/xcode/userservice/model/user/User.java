@@ -1,4 +1,5 @@
 package com.xcode.userservice.model.user;
+import com.xcode.userservice.model.rol.Rol;
 import com.xcode.userservice.model.user.exception.InvalidEmailException;
 import com.xcode.userservice.model.user.exception.InvalidSalaryException;
 import com.xcode.userservice.model.user.exception.MissingRequiredFieldException;
@@ -7,8 +8,6 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
-//import lombok.NoArgsConstructor;
-
 
 @Getter
 @Builder(toBuilder = true)
@@ -23,10 +22,11 @@ public class User {
     private final String email;
     private final String document;
     private final Double salaryBase;
+    private final Rol rol;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    private User(UUID idUser, String firstName, String lastName, LocalDate birthDate, String address, String phone, String email, String document, Double salaryBase) {
+    private User(UUID idUser, String firstName, String lastName, LocalDate birthDate, String address, String phone, String email, String document, Double salaryBase,Rol rol) {
 
         if (firstName == null || firstName.isBlank()) {
             throw new MissingRequiredFieldException("firstName");
@@ -46,6 +46,9 @@ public class User {
         if(!isEmailValid(email)) {
             throw new InvalidEmailException(email);
         }
+        if (rol == null) {
+            throw new MissingRequiredFieldException("rol");
+        }
         this.idUser = idUser;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -55,6 +58,7 @@ public class User {
         this.email = email;
         this.document = document;
         this.salaryBase = salaryBase;
+        this.rol = rol;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
