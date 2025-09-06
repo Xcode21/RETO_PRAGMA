@@ -26,10 +26,11 @@ public class User {
     private String document;
     private Double salaryBase;
     private Role role;
+    private String password;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static User createNew(String firstName, String lastName, LocalDate birthDate, String address, String phone, String email, String document, Double salaryBase, Role role) {
+    public static User createNew(String firstName, String lastName, LocalDate birthDate, String address, String phone, String email, String document, Double salaryBase, Role role,String password) {
 
         if (firstName == null || firstName.isBlank()) {
             throw new MissingRequiredFieldException("firstName");
@@ -55,11 +56,14 @@ public class User {
         return User.builder()
                 .firstName(firstName)
                 .lastName(lastName)
+                .birthDate(birthDate)
+                .address(address)
                 .email(email)
                 .document(document)
                 .phone(phone)
                 .role(role)
                 .salaryBase(salaryBase)
+                .password(password)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

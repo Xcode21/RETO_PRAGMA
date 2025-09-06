@@ -27,7 +27,6 @@ public class UserRequest {
 
     @NotNull(message = "La fecha de nacimiento es obligatoria")
     @Past(message = "La fecha de nacimiento debe ser anterior a hoy")
-
     private LocalDate birthDate;
 
     @NotBlank(message = "La dirección es obligatoria")
@@ -54,9 +53,15 @@ public class UserRequest {
     @DecimalMin(value = "0.0", inclusive = false, message = "El salario debe ser mayor a cero")
     @DecimalMax(value = "1500001", inclusive = false, message = "El salario debe ser menor o giual a 15,000,000")
     @Schema(description = "Salario base del usuario", type = "number", format = "decimal", example = "2500.75")
-    Double baseSalary;
+    private Double baseSalary;
 
-    @NotNull(message = "El tipo de préstamo es obligatorio")
+    @NotNull(message = "El rol es obligatorio")
+    @Min(value = 1, message = "Role ID must be positive")
     @Schema(description = "Rol del usuario (1=Admin, 2=User)", example = "1")
     private Integer rol;
+
+    @NotNull(message = "La contraseña es obligatoria")
+    @NotBlank(message = "La contraseña no puede estar vacía")
+    @Schema(description = "Password de inicio se session")
+    private String password;
 }

@@ -1,4 +1,4 @@
-package com.xcode.userservice.r2dbc;
+package com.xcode.userservice.r2dbc.repository.user;
 
 import com.xcode.userservice.model.user.User;
 import com.xcode.userservice.model.user.exception.UserNotFoundException;
@@ -32,8 +32,8 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     @Override
     public Mono<Boolean> existsByEmailAndDocument(String email, String document) {
         return repository.existsByEmailAndDocument(email, document)
-                .doOnSubscribe(sub -> log.debug("Finding user with email={} and document={}", email, document))
-                .doOnSuccess(result -> log.debug("Exist User: {}", result))
+                .doOnSubscribe(sub -> log.info("Finding user with email={} and document={}", email, document))
+                .doOnSuccess(result -> log.info("Exist User: {}", result))
                 .doOnError(error -> log.error("Error verify exist user in BD", error))
                 .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
     }
@@ -41,19 +41,18 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     @Override
     public Mono<User> findByIdWithRole(UUID idUser) {
         return repository.findByIdWithRole(idUser)
-                .doOnSubscribe(sub -> log.debug("Finding user with role: {}", idUser))
-                .switchIfEmpty(Mono.error(new UserNotFoundException(idUser)))
+                .doOnSubscribe(sub -> log.info("Finding user with role: {}", idUser))
                 .map(mapper::dtoToDomain)
-                .doOnSuccess(user -> log.debug("User found: {} (Role: {})", user.getIdUser(), user.getRole().getType()))
-                .doOnError(error -> log.error("Error finding user with role. ID: {}, Error: {}", idUser, error.getClass().getSimpleName(), error))
+                .doOnSuccess(user -> log.info("User found: {} (Role: {})", user.getIdUser(), user.getRole().getType()))
+                .doOnError(error -> log.error("Database error finding user with role. ID: {}, Error: {}", idUser, error.getClass().getSimpleName(), error))
                 .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
     }
 
     @Override
     public Mono<User> save(User user) {
         return super.save(user)
-                .doOnSubscribe(sub -> log.debug("Saving user - Name: {},  Role: {}", user.getFirstName(), user.getRole().getType()))
-                .doOnSuccess(savedUser -> log.debug("User saved successfully - ID: {}, Name: {}, Role: {}", savedUser.getIdUser(), savedUser.getFirstName(), savedUser.getRole().getType()))
+                .doOnSubscribe(sub -> log.info("Saving user - Name: {},  Role: {}", user.getFirstName(), user.getRole().getType()))
+                .doOnSuccess(savedUser -> log.info("User saved successfully - ID: {}, Name: {}, Role: {}", savedUser.getIdUser(), savedUser.getFirstName(), savedUser.getRole().getType()))
                 .doOnError(error -> log.error("Error saving user - Name: {}, Error: {}", user.getIdUser(), error.getClass().getSimpleName(), error))
                 .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
     }

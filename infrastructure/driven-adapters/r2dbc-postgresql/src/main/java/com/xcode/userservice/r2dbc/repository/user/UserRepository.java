@@ -1,6 +1,5 @@
-package com.xcode.userservice.r2dbc;
+package com.xcode.userservice.r2dbc.repository.user;
 
-import com.xcode.userservice.model.user.User;
 import com.xcode.userservice.r2dbc.dto.UserWithRoleDto;
 import com.xcode.userservice.r2dbc.entity.UserEntity;
 import org.springframework.data.r2dbc.repository.Query;
@@ -12,7 +11,7 @@ import java.util.UUID;
 
 public interface UserRepository extends ReactiveCrudRepository<UserEntity, UUID>, ReactiveQueryByExampleExecutor<UserEntity> {
 
-    @Query("SELECT EXISTS (SELECT 1 FROM users WHERE email = :email AND documento = :document)")
+    @Query("SELECT EXISTS (SELECT 1 FROM users WHERE email = :email OR documento = :document)")
     Mono<Boolean> existsByEmailAndDocument(String email, String document);
 
     @Query("SELECT u.id, u.nombres, u.apellidos, u.fecha_nacimiento, u.direccion, " +

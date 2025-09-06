@@ -11,4 +11,5 @@ public class InfrastructureException extends RuntimeException {
     public InfraErrorCode getErrorCode() {
         return errorCode;
     }
+
 }

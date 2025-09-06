@@ -19,7 +19,8 @@ public class RegisterUserUseCase {
         return checkUserUniqueness(user)
                 .then(validateRoleExists(user.getRole().getIdRol()))
                 .then(userRepository.save(user))
-                .flatMap(savedUser -> userRepository.findByIdWithRole(savedUser.getIdUser()));
+                .flatMap(savedUser -> userRepository.findByIdWithRole(savedUser.getIdUser())
+                        .switchIfEmpty(Mono.error(new DomainException(DomainErrorCode.USER_NOT_FOUND))));
     }
 
     private Mono<Void> checkUserUniqueness(User user) {

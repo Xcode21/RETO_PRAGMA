@@ -13,8 +13,8 @@ public class Role {
     private final String description;
 
     public Role(Integer idRol, RolType type, String description) {
-        if (type == null) {
-            throw new MissingRequiredFieldException("Role type");
+        if (idRol == null) {
+            throw new MissingRequiredFieldException("Role Id");
         }
         this.idRol = idRol;
         this.type = type;

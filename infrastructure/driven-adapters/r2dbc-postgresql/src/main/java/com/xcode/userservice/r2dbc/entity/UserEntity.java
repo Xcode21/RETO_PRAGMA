@@ -20,7 +20,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserEntity {
     @Id
-    private UUID id;
+    @Column("id")
+    private UUID idUser;
 
     @Column("nombres")
     private String firstName;
@@ -44,10 +45,13 @@ public class UserEntity {
     private String document;
 
     @Column("salario_base")
-    private BigDecimal baseSalary;
+    private Double salaryBase;
 
     @Column("id_rol")
     private Integer rol;
+
+    @Column("password")
+    private String password;
 
     @Column("fecha_creacion")
     private LocalDateTime createdAt;

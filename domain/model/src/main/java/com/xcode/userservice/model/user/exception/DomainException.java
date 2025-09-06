@@ -22,4 +22,5 @@ public class DomainException extends RuntimeException {
     public String getErrorMessage() {
         return super.getMessage();
     }
+
 }

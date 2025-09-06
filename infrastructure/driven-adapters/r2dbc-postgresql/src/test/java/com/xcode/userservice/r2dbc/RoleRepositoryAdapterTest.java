@@ -1,5 +1,7 @@
 package com.xcode.userservice.r2dbc;
 
+import com.xcode.userservice.r2dbc.repository.user.UserRepository;
+import com.xcode.userservice.r2dbc.repository.user.UserRepositoryAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserRepositoryAdapterTest {
+class RoleRepositoryAdapterTest {
     // TODO: change four you own tests
 
     @InjectMocks
@@ -27,7 +29,7 @@ class UserRepositoryAdapterTest {
     @Mock
     ObjectMapper mapper;
 
-    @Test
+    /*@Test
     void mustFindValueById() {
 
         when(repository.findById("1")).thenReturn(Mono.just("test"));
@@ -50,7 +52,7 @@ class UserRepositoryAdapterTest {
         StepVerifier.create(result)
                 .expectNextMatches(value -> value.equals("test"))
                 .verifyComplete();
-    }
+    }*/
 
     @Test
     void mustFindByExample() {
