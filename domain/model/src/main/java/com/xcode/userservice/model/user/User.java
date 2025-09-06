@@ -1,5 +1,5 @@
 package com.xcode.userservice.model.user;
-import com.xcode.userservice.model.rol.Rol;
+import com.xcode.userservice.model.rol.Role;
 import com.xcode.userservice.model.user.exception.InvalidEmailException;
 import com.xcode.userservice.model.user.exception.InvalidSalaryException;
 import com.xcode.userservice.model.user.exception.MissingRequiredFieldException;
@@ -22,11 +22,11 @@ public class User {
     private final String email;
     private final String document;
     private final Double salaryBase;
-    private final Rol rol;
+    private final Role role;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    private User(UUID idUser, String firstName, String lastName, LocalDate birthDate, String address, String phone, String email, String document, Double salaryBase,Rol rol) {
+    private User(UUID idUser, String firstName, String lastName, LocalDate birthDate, String address, String phone, String email, String document, Double salaryBase, Role role) {
 
         if (firstName == null || firstName.isBlank()) {
             throw new MissingRequiredFieldException("firstName");
@@ -46,8 +46,8 @@ public class User {
         if(!isEmailValid(email)) {
             throw new InvalidEmailException(email);
         }
-        if (rol == null) {
-            throw new MissingRequiredFieldException("rol");
+        if (role == null) {
+            throw new MissingRequiredFieldException("role");
         }
         this.idUser = idUser;
         this.firstName = firstName;
@@ -58,7 +58,7 @@ public class User {
         this.email = email;
         this.document = document;
         this.salaryBase = salaryBase;
-        this.rol = rol;
+        this.role = role;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }

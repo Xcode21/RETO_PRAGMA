@@ -1,21 +1,20 @@
 package com.xcode.userservice.model.rol;
 import com.xcode.userservice.model.user.exception.MissingRequiredFieldException;
 import lombok.Builder;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 //import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 @Getter
 @Builder(toBuilder = true)
-public class Rol {
+public class Role {
     private final Integer idRol;
     private final RolType type;
     private final String description;
 
-    public Rol(Integer idRol, RolType type, String description) {
+    public Role(Integer idRol, RolType type, String description) {
         if (type == null) {
-            throw new MissingRequiredFieldException("Rol type");
+            throw new MissingRequiredFieldException("Role type");
         }
         this.idRol = idRol;
         this.type = type;
