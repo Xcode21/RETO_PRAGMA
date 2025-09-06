@@ -6,11 +6,12 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 public interface UserRepository {
-    Mono<User> saveUser(User user);
-    Mono<Boolean> existEmail(String email);
-    Mono<Boolean> existDocumento(String document);
-    Mono<User> getUser(String email);
-    Mono<User> getUserByDocument(String document);
-    Mono<User> getUserWithRole(UUID idUser);
-    Mono<User> getUserWithRoleEmail(String email);
+    Mono<User> save(User user);
+    Mono<Boolean> existsByEmail(String email);
+    Mono<Boolean> existsByDocument(String document);
+    Mono<Boolean> existsByEmailAndDocument(String email, String document);
+    Mono<User> findByEmail(String email);
+    Mono<User> findByDocument(String document);
+    Mono<User> findByIdWithRole(UUID idUser);
+    Mono<User> findByEmailWithRole(String email);
 }
