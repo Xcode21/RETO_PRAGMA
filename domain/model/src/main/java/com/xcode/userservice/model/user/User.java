@@ -1,4 +1,5 @@
 package com.xcode.userservice.model.user;
+
 import com.xcode.userservice.model.rol.Role;
 import com.xcode.userservice.model.user.exception.InvalidEmailException;
 import com.xcode.userservice.model.user.exception.InvalidSalaryException;
@@ -9,24 +10,26 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Getter
 @Builder(toBuilder = true)
+@Getter // Solo getters, inmutable
+@AllArgsConstructor(access = AccessLevel.PRIVATE) // Constructor privado
+@NoArgsConstructor(access = AccessLevel.PRIVATE) // Para frameworks
 public class User {
 
-    private final UUID idUser;
-    private final String firstName;
-    private final String lastName;
-    private final LocalDate birthDate;
-    private final String address;
-    private final String phone;
-    private final String email;
-    private final String document;
-    private final Double salaryBase;
-    private final Role role;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+    private UUID idUser;
+    private String firstName;
+    private String lastName;
+    private LocalDate birthDate;
+    private String address;
+    private String phone;
+    private String email;
+    private String document;
+    private Double salaryBase;
+    private Role role;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    private User(UUID idUser, String firstName, String lastName, LocalDate birthDate, String address, String phone, String email, String document, Double salaryBase, Role role) {
+    public static User createNew(String firstName, String lastName, LocalDate birthDate, String address, String phone, String email, String document, Double salaryBase, Role role) {
 
         if (firstName == null || firstName.isBlank()) {
             throw new MissingRequiredFieldException("firstName");
@@ -43,27 +46,43 @@ public class User {
         if (document == null || document.isBlank()) {
             throw new MissingRequiredFieldException("Document");
         }
-        if(!isEmailValid(email)) {
+        if (!isEmailValid(email)) {
             throw new InvalidEmailException(email);
         }
         if (role == null) {
             throw new MissingRequiredFieldException("role");
         }
-        this.idUser = idUser;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthDate = birthDate;
-        this.address = address;
-        this.phone = phone;
-        this.email = email;
-        this.document = document;
-        this.salaryBase = salaryBase;
-        this.role = role;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        return User.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .document(document)
+                .phone(phone)
+                .role(role)
+                .salaryBase(salaryBase)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
     }
 
-    public boolean isEmailValid(String value) {
+    public static User fromRepository(UUID idUser, String name, String lastName, String email,
+                                      String document, String phone, Role role, Double baseSalary,
+                                      LocalDateTime createdAt) {
+
+        return User.builder()
+                .idUser(idUser)
+                .firstName(name)
+                .lastName(lastName)
+                .email(email)
+                .document(document)
+                .phone(phone)
+                .role(role)
+                .salaryBase(baseSalary)
+                .createdAt(createdAt)
+                .build();
+    }
+
+    public static boolean isEmailValid(String value) {
         return value != null && value.matches("^[A-Za-z0-9+_.-]+@(.+)$");
     }
 

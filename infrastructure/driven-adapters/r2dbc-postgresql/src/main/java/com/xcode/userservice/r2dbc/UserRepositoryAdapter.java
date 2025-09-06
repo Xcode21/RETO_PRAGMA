@@ -1,0 +1,86 @@
+package com.xcode.userservice.r2dbc;
+
+import com.xcode.userservice.model.user.User;
+import com.xcode.userservice.model.user.exception.UserNotFoundException;
+import com.xcode.userservice.r2dbc.entity.UserEntity;
+import com.xcode.userservice.r2dbc.exception.InfraErrorCode;
+import com.xcode.userservice.r2dbc.exception.InfrastructureException;
+import com.xcode.userservice.r2dbc.helper.ReactiveAdapterOperations;
+import com.xcode.userservice.r2dbc.mapper.UserMapper;
+import lombok.extern.log4j.Log4j2;
+import org.reactivecommons.utils.ObjectMapper;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
+
+import java.util.UUID;
+
+@Repository
+@Log4j2
+public class UserRepositoryAdapter extends ReactiveAdapterOperations<
+        User,
+        UserEntity,
+        UUID,
+        UserRepository
+        > implements com.xcode.userservice.model.user.gateways.UserRepository {
+    public UserRepositoryAdapter(UserRepository repository, ObjectMapper mapper, UserMapper userMapper) {
+        super(repository, mapper, d -> mapper.map(d, User.class));
+        this.mapper = userMapper;
+    }
+
+    private final UserMapper mapper;
+
+    @Override
+    public Mono<Boolean> existsByEmailAndDocument(String email, String document) {
+        return repository.existsByEmailAndDocument(email, document)
+                .doOnSubscribe(sub -> log.debug("Finding user with email={} and document={}", email, document))
+                .doOnSuccess(result -> log.debug("Exist User: {}", result))
+                .doOnError(error -> log.error("Error verify exist user in BD", error))
+                .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
+    }
+
+    @Override
+    public Mono<User> findByIdWithRole(UUID idUser) {
+        return repository.findByIdWithRole(idUser)
+                .doOnSubscribe(sub -> log.debug("Finding user with role: {}", idUser))
+                .switchIfEmpty(Mono.error(new UserNotFoundException(idUser)))
+                .map(mapper::dtoToDomain)
+                .doOnSuccess(user -> log.debug("User found: {} (Role: {})", user.getIdUser(), user.getRole().getType()))
+                .doOnError(error -> log.error("Error finding user with role. ID: {}, Error: {}", idUser, error.getClass().getSimpleName(), error))
+                .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
+    }
+
+    @Override
+    public Mono<User> save(User user) {
+        return super.save(user)
+                .doOnSubscribe(sub -> log.debug("Saving user - Name: {},  Role: {}", user.getFirstName(), user.getRole().getType()))
+                .doOnSuccess(savedUser -> log.debug("User saved successfully - ID: {}, Name: {}, Role: {}", savedUser.getIdUser(), savedUser.getFirstName(), savedUser.getRole().getType()))
+                .doOnError(error -> log.error("Error saving user - Name: {}, Error: {}", user.getIdUser(), error.getClass().getSimpleName(), error))
+                .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
+    }
+
+    @Override
+    public Mono<Boolean> existsByEmail(String email) {
+        return null;
+    }
+
+    @Override
+    public Mono<Boolean> existsByDocument(String document) {
+        return null;
+    }
+
+    @Override
+    public Mono<User> findByEmail(String email) {
+        return null;
+    }
+
+    @Override
+    public Mono<User> findByDocument(String document) {
+        return null;
+    }
+
+
+    @Override
+    public Mono<User> findByEmailWithRole(String email) {
+        return null;
+    }
+}

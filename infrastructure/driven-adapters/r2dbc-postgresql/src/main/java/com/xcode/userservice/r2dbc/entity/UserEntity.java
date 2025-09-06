@@ -13,47 +13,46 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table(name="user")
+@Table(name="users")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity {
     @Id
-    @Column("id")
-    private UUID idUser;
+    private UUID id;
 
-    @Column("first_name")
+    @Column("nombres")
     private String firstName;
 
-    @Column("last_name")
+    @Column("apellidos")
     private String lastName;
 
-    @Column("birth_date")
+    @Column("fecha_nacimiento")
     private LocalDate birthDate;
 
-    @Column("addres")
+    @Column("direccion")
     private String address;
 
-    @Column("phone")
+    @Column("telefono")
     private String phone;
 
     @Column("email")
     private String email;
 
-    @Column("document")
+    @Column("documento")
     private String document;
 
-    @Column("salary_base")
-    private Double salaryBase;
+    @Column("salario_base")
+    private BigDecimal baseSalary;
 
-    @Column("id_role")
-    private Integer role;
+    @Column("id_rol")
+    private Integer rol;
 
-    @Column("create_at")
+    @Column("fecha_creacion")
     private LocalDateTime createdAt;
 
-    @Column("update_at")
+    @Column("fecha_actualizacion")
     private LocalDateTime updatedAt;
 
 }
