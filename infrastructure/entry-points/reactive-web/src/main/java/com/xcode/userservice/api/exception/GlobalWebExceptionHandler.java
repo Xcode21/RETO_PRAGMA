@@ -67,7 +67,7 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
                     .map(fieldError -> ValidationFieldError.builder()
                             .field(fieldError.getField())
                             .message(fieldError.getDefaultMessage())
-                            .rejectedValue(fieldError.getRejectedValue())
+                            //.rejectedValue(fieldError.getRejectedValue())
                             .build())
                     .collect(Collectors.toList()), path);
         }
@@ -78,7 +78,7 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
                     .map(violation -> ValidationFieldError.builder()
                             .field(extractFieldName(violation.getPropertyPath()))
                             .message(violation.getMessage())
-                            .rejectedValue(violation.getInvalidValue())
+                           // .rejectedValue(violation.getInvalidValue())
                             .build())
                     .collect(Collectors.toList()), path);
         }
@@ -157,7 +157,7 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
                 ValidationFieldError.builder()
                     .field(fieldPath)
                     .message(errorMessage)
-                    .rejectedValue(formatEx.getValue())
+                   // .rejectedValue(formatEx.getValue())
                     .build()
             );
                     
@@ -172,7 +172,7 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
                 ValidationFieldError.builder()
                     .field(fieldPath)
                     .message(errorMessage)
-                    .rejectedValue(null)
+                   // .rejectedValue(null)
                     .build()
             );
                     
@@ -183,11 +183,11 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
             String errorMessage = "JSON malformado: " + jsonProcessingEx.getOriginalMessage();
             
             return CustomErrorResponse.builder()
-                    .code(VALIDATION_ERROR.getCode())
+                    .code(NOT_ACCEPTABLE.getCode())
                     .message("Error de formato JSON")
-                    .data(Map.of("jsonError", errorMessage))
+                    //.data(Map.of("fieldErrors", errorMessage))
                     .path(path)
-                    .statusCode(VALIDATION_ERROR.getHttpStatus().value())
+                    .statusCode(NOT_ACCEPTABLE.getHttpStatus().value())
                     .logLevel("warn")
                     .build();
         }
@@ -250,9 +250,9 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
     
     private HttpStatus mapDomainErrorToHttpStatus(String domainErrorCode) {
         return switch (domainErrorCode) {
-            case "USR_001", "USR_002", "USR_003" -> HttpStatus.BAD_REQUEST;
+            case "USR_001", "USR_002", "USR_003","USR_005" -> HttpStatus.BAD_REQUEST;
             case "USR_004" -> HttpStatus.CONFLICT;
-            case "USR_005", "ROLE_001" -> HttpStatus.NOT_FOUND;
+            case  "ROLE_001" -> HttpStatus.NOT_FOUND;
             case "ROLE_002" -> HttpStatus.FORBIDDEN;
             default -> HttpStatus.BAD_REQUEST;
         };
@@ -303,11 +303,13 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.findAndRegisterModules();
             String jsonBody = objectMapper.writeValueAsString(body);
+            log.debug("Serialized response: {}", jsonBody);
             DataBuffer buffer = response.bufferFactory().wrap(jsonBody.getBytes(StandardCharsets.UTF_8));
             return response.writeWith(Mono.just(buffer));
         } catch (JsonProcessingException e) {
-            log.error("Error serializing response: {}", e.getMessage());
+            log.error("Error serializing response: {} - Body: {}", e.getMessage(), body);
             return response.setComplete();
         }
     }

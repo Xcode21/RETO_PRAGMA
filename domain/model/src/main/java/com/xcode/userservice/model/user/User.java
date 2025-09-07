@@ -4,6 +4,7 @@ import com.xcode.userservice.model.rol.Role;
 import com.xcode.userservice.model.user.exception.InvalidEmailException;
 import com.xcode.userservice.model.user.exception.InvalidSalaryException;
 import com.xcode.userservice.model.user.exception.MissingRequiredFieldException;
+import com.xcode.userservice.model.user.exception.UserNotAllowedException;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -47,12 +48,16 @@ public class User {
         if (document == null || document.isBlank()) {
             throw new MissingRequiredFieldException("Document");
         }
+        if (!isAdult(birthDate)) {
+            throw new UserNotAllowedException(birthDate.toString());
+        }
         if (!isEmailValid(email)) {
             throw new InvalidEmailException(email);
         }
         if (role == null) {
             throw new MissingRequiredFieldException("role");
         }
+
         return User.builder()
                 .firstName(firstName)
                 .lastName(lastName)
@@ -77,17 +82,25 @@ public class User {
                 .idUser(idUser)
                 .firstName(name)
                 .lastName(lastName)
+                .birthDate(birthDate)
+                .address(address)
                 .email(email)
                 .document(document)
                 .phone(phone)
                 .role(role)
                 .salaryBase(baseSalary)
+                .password(password)
                 .createdAt(createdAt)
                 .build();
     }
 
     public static boolean isEmailValid(String value) {
         return value != null && value.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+    }
+
+    private static boolean isAdult(LocalDate birthDate) {
+        return birthDate.plusYears(18).isBefore(LocalDate.now()) ||
+                birthDate.plusYears(18).isEqual(LocalDate.now());
     }
 
 }

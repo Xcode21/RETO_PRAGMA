@@ -23,7 +23,14 @@ public class UserHandler {
     public Mono<ServerResponse> createUser(ServerRequest request) {
         return request.bodyToMono(UserRequest.class)
                 .switchIfEmpty(Mono.error(new ServerWebInputException("Request body is required")))
-                .doOnNext(validationConfig::validate)
+                .flatMap(userRequest -> {
+                    try {
+                        validationConfig.validate(userRequest);
+                        return Mono.just(userRequest);
+                    } catch (Exception e) {
+                        return Mono.error(e);
+                    }
+                })
                 .map(userMapper::requestToDomain)
                 .flatMap(registerUserUseCase::execute)
                 .map(userMapper::domainToResponse)
