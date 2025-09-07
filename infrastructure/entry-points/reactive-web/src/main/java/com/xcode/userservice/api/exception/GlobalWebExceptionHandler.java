@@ -20,6 +20,7 @@ import org.springframework.web.server.*;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -153,6 +154,21 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
     private CustomErrorResponse handleServerWebInputException(Throwable ex, String path) {
         Throwable rootCause = getRootCause(ex);
 
+        if (rootCause instanceof DateTimeParseException dateEx) {
+            String errorMessage = "Formato de fecha inválido: " + dateEx.getMessage();
+
+            String fieldName = findFieldNameInExceptionChain(ex, "dateField");
+            
+            List<ValidationFieldError> fieldErrors = List.of(
+                    ValidationFieldError.builder()
+                            .field(fieldName)
+                            .message(errorMessage)
+                            .build()
+            );
+
+            return buildValidationErrorResponse(fieldErrors, path);
+        }
+        
         if (rootCause instanceof InvalidFormatException formatEx) {
             String fieldPath = extractFieldPath(formatEx.getPath());
             String errorMessage = "Invalid format for the field: " + fieldPath;
@@ -298,6 +314,20 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
                 .map(ref -> ref.getFieldName() != null ? ref.getFieldName() : "[" + ref.getIndex() + "]")
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining("."));
+    }
+    
+    private String findFieldNameInExceptionChain(Throwable ex, String fallback) {
+        Throwable current = ex;
+        while (current != null) {
+            if (current instanceof JsonMappingException jsonEx && jsonEx.getPath() != null) {
+                String fieldName = extractFieldPath(jsonEx.getPath());
+                if (!"unknown".equals(fieldName)) {
+                    return fieldName;
+                }
+            }
+            current = current.getCause();
+        }
+        return fallback;
     }
 
     private Mono<Void> buildResponse(ServerWebExchange exchange, Object body, HttpStatus status) {

@@ -63,7 +63,6 @@ public class UserRequest {
     private Integer rol;
 
     @NotNull(message = "Password is required")
-    @NotBlank(message = "The password cannot be empty")
     @Schema(description = "Password de inicio se session")
     private String password;
 }
