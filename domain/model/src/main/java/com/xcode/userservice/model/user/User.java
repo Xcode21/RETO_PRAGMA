@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Builder(toBuilder = true)
-@Getter // Solo getters, inmutable
-@AllArgsConstructor(access = AccessLevel.PRIVATE) // Constructor privado
-@NoArgsConstructor(access = AccessLevel.PRIVATE) // Para frameworks
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class User {
 
     private UUID idUser;
