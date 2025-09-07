@@ -34,7 +34,7 @@ public class RoleRepositoryAdapter extends ReactiveAdapterOperations<
         return repository.findById(idRol)
                 .doOnSubscribe(sub -> log.info("Finding role: {}", idRol))
                 .map(mapper::entityToDomain)
-                .doOnSuccess(role -> log.info("Role found: {}", role.getType()))
+                .doOnNext(role -> log.info("Role found: {}", role.getType()))
                 .doOnError(error -> log.error("Database error finding role: {}", idRol, error))
                 .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
     }

@@ -69,8 +69,8 @@ public class User {
                 .build();
     }
 
-    public static User fromRepository(UUID idUser, String name, String lastName, String email,
-                                      String document, String phone, Role role, Double baseSalary,
+    public static User fromRepository(UUID idUser, String name, String lastName,LocalDate birthDate,String address, String email,
+                                      String document, String phone, Role role, Double baseSalary,String password,
                                       LocalDateTime createdAt) {
 
         return User.builder()

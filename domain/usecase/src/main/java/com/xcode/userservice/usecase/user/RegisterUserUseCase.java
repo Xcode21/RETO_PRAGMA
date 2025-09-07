@@ -5,6 +5,7 @@ import com.xcode.userservice.model.rol.gateways.RoleRepository;
 import com.xcode.userservice.model.user.User;
 import com.xcode.userservice.model.user.exception.DomainErrorCode;
 import com.xcode.userservice.model.user.exception.DomainException;
+import com.xcode.userservice.model.user.gateways.TransactionalExecutor;
 import com.xcode.userservice.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -14,13 +15,15 @@ import reactor.core.publisher.Mono;
 public class RegisterUserUseCase {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final TransactionalExecutor txExecutor;
 
     public Mono<User> execute(User user) {
-        return checkUserUniqueness(user)
+        Mono<User> userResult= checkUserUniqueness(user)
                 .then(validateRoleExists(user.getRole().getIdRol()))
                 .then(userRepository.save(user))
                 .flatMap(savedUser -> userRepository.findByIdWithRole(savedUser.getIdUser())
                         .switchIfEmpty(Mono.error(new DomainException(DomainErrorCode.USER_NOT_FOUND))));
+        return txExecutor.executeInTransaction(userResult);
     }
 
     private Mono<Void> checkUserUniqueness(User user) {

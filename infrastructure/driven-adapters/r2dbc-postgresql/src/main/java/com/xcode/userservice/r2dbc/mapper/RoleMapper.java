@@ -14,12 +14,12 @@ public class RoleMapper {
         if (entity == null) {
             return null;
         }
-        
-        return Role.builder()
+        Role role= Role.builder()
                 .idRol(entity.getId())
                 .type(stringToRolType(entity.getNombre()))
                 .description(entity.getDescripcion())
                 .build();
+        return role;
     }
 
     public RoleEntity domainToEntity(Role domain) {

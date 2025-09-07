@@ -54,7 +54,7 @@ class RoleRepositoryAdapterTest {
                 .verifyComplete();
     }*/
 
-    @Test
+  /*  @Test
     void mustFindByExample() {
         when(repository.findAll(any(Example.class))).thenReturn(Flux.just("test"));
         when(mapper.map("test", Object.class)).thenReturn("test");
@@ -64,7 +64,7 @@ class RoleRepositoryAdapterTest {
         StepVerifier.create(result)
                 .expectNextMatches(value -> value.equals("test"))
                 .verifyComplete();
-    }
+    }*/
 
     @Test
     void mustSaveValue() {

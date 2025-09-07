@@ -15,6 +15,9 @@ public record UserWithRoleDto (
         String email,
         String document,
         Double salaryBase,
-        String rolNombre,
-        LocalDateTime fechaCreacion
+        Integer idRol,
+        String roleName,
+        String roleDescription,
+        String password,
+        LocalDateTime createAt
 ) {}

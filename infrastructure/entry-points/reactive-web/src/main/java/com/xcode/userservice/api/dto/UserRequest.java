@@ -15,53 +15,53 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserRequest {
 
-    @NotBlank(message = "Los nombres son obligatorios")
-    @Size(min = 2, max = 100, message = "Los nombres deben tener entre 2 y 100 caracteres")
+    @NotBlank(message = "Names are required")
+    @Size(min = 2, max = 100, message = "Names must be between 2 and 100 characters")
     @Schema(description = "Nombres del usuario", example = "Juan Carlos")
     private String firstName;
 
-    @NotBlank(message = "Los apellidos son obligatorios")
-    @Size(min = 2, max = 100, message = "Los apellidos deben tener entre 2 y 100 caracteres")
+    @NotBlank(message = "Last names are required")
+    @Size(min = 2, max = 100, message = "Last names must be between 2 and 100 characters long.")
     @Schema(description = "Apellidos del usuario", example = "Pérez Gómez")
     private String lastName;
 
-    @NotNull(message = "La fecha de nacimiento es obligatoria")
-    @Past(message = "La fecha de nacimiento debe ser anterior a hoy")
+    @NotNull(message = "Date of birth is required")
+    @Past(message = "The date of birth must be before today")
     private LocalDate birthDate;
 
-    @NotBlank(message = "La dirección es obligatoria")
-    @Size(max = 255, message = "La dirección no puede exceder 255 caracteres")
+    @NotBlank(message = "Address is required")
+    @Size(max = 255, message = "The address cannot exceed 255 characters.")
     @Schema(description = "Dirección actual del usuario", example = "Av. Siempre Viva 742")
     private String address;
 
-    @NotBlank(message = "El teléfono es obligatorio")
-    @Pattern(regexp = "^[0-9+\\-\\s()]{7,15}$", message = "Formato de teléfono inválido")
+    @NotBlank(message = "Telephone is required")
+    @Pattern(regexp = "^[0-9+\\-\\s()]{7,15}$", message = "Invalid phone format")
     @Schema(description = "Número de teléfono", example = "+51 999888777")
     private String phone;
 
-    @NotBlank(message = "El correo electrónico es obligatorio")
-    @Email(message = "Formato de correo electrónico inválido")
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     @Schema(description = "Correo electrónico válido", example = "juan.perez@email.com")
     private String email;
 
-    @NotBlank(message = "El documento es obligatorio")
-    @Size(min = 1, max = 15, message = "El documento debe tener entre 1 y 15 caracteres")
+    @NotBlank(message = "The document is mandatory")
+    @Size(min = 1, max = 15, message = "The document must have between 1 and 15 characters")
     @Schema(description = "Documento de identidad", example = "12345678")
     private String documento;
 
-    @NotNull(message = "El salario base es obligatorio")
-    @DecimalMin(value = "0.0", inclusive = false, message = "El salario debe ser mayor a cero")
-    @DecimalMax(value = "1500001", inclusive = false, message = "El salario debe ser menor o giual a 15,000,000")
+    @NotNull(message = "Base salary is mandatory")
+    @DecimalMin(value = "0.0", inclusive = false, message = "The salary must be greater than zero")
+    @DecimalMax(value = "1500001", inclusive = false, message = "The salary must be less than or equal to 15,000,000")
     @Schema(description = "Salario base del usuario", type = "number", format = "decimal", example = "2500.75")
     private Double baseSalary;
 
-    @NotNull(message = "El rol es obligatorio")
+    @NotNull(message = "The role is mandatory")
     @Min(value = 1, message = "Role ID must be positive")
     @Schema(description = "Rol del usuario (1=Admin, 2=User)", example = "1")
     private Integer rol;
 
-    @NotNull(message = "La contraseña es obligatoria")
-    @NotBlank(message = "La contraseña no puede estar vacía")
+    @NotNull(message = "Password is required")
+    @NotBlank(message = "The password cannot be empty")
     @Schema(description = "Password de inicio se session")
     private String password;
 }

@@ -194,7 +194,7 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
         
         return CustomErrorResponse.builder()
                 .code(REQUEST_BODY_REQUIRED.getCode())
-                .message("Cuerpo de solicitud requerido o inválido: " + ex.getMessage())
+                .message(REQUEST_BODY_REQUIRED.getDefaultMessage()+": " + ex.getMessage())
                 .path(path)
                 .statusCode(REQUEST_BODY_REQUIRED.getHttpStatus().value())
                 .logLevel("warn")

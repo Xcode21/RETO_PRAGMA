@@ -3,7 +3,7 @@ package com.xcode.userservice.api.exception;
 import org.springframework.http.HttpStatus;
 
 public enum ApiErrorCode {
-    VALIDATION_ERROR("API_001", "Erro validation data", HttpStatus.BAD_REQUEST),
+    VALIDATION_ERROR("API_001", "Error validation data", HttpStatus.BAD_REQUEST),
     REQUEST_BODY_REQUIRED("API_002", "Requests body is required", HttpStatus.BAD_REQUEST),
     MAPPING_ERROR("API_003", "Error in data processing", HttpStatus.UNPROCESSABLE_ENTITY),
     DATABASE_CONNECTION_ERROR("API_004", "Database connection error", HttpStatus.SERVICE_UNAVAILABLE),

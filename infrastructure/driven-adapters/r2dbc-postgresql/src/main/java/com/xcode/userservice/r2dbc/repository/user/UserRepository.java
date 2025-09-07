@@ -15,7 +15,7 @@ public interface UserRepository extends ReactiveCrudRepository<UserEntity, UUID>
     Mono<Boolean> existsByEmailAndDocument(String email, String document);
 
     @Query("SELECT u.id, u.nombres, u.apellidos, u.fecha_nacimiento, u.direccion, " +
-            "u.telefono, u.email, u.documento, u.salario_base, u.fecha_creacion, r.nombre as rol_nombre " +
+            "u.telefono, u.email, u.documento, u.salario_base, r.id as id_rol,r.nombre as role_name, r.descripcion as role_description,u.password,u.fecha_creacion " +
             "FROM users u INNER JOIN rol r ON u.id_rol = r.id " +
             "WHERE u.id = :id")
     Mono<UserWithRoleDto> findByIdWithRole(UUID idUser);

@@ -10,6 +10,7 @@ import com.xcode.userservice.r2dbc.mapper.UserMapper;
 import lombok.extern.log4j.Log4j2;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -22,13 +23,14 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
         UUID,
         UserRepository
         > implements com.xcode.userservice.model.user.gateways.UserRepository {
-    public UserRepositoryAdapter(UserRepository repository, ObjectMapper mapper, UserMapper userMapper) {
+    public UserRepositoryAdapter(UserRepository repository, ObjectMapper mapper, UserMapper userMapper, TransactionalOperator txOperator) {
         super(repository, mapper, d -> mapper.map(d, User.class));
         this.mapper = userMapper;
+        this.txOperator = txOperator;
     }
 
     private final UserMapper mapper;
-
+    private final TransactionalOperator txOperator;
     @Override
     public Mono<Boolean> existsByEmailAndDocument(String email, String document) {
         return repository.existsByEmailAndDocument(email, document)
@@ -43,18 +45,18 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
         return repository.findByIdWithRole(idUser)
                 .doOnSubscribe(sub -> log.info("Finding user with role: {}", idUser))
                 .map(mapper::dtoToDomain)
-                .doOnSuccess(user -> log.info("User found: {} (Role: {})", user.getIdUser(), user.getRole().getType()))
-                .doOnError(error -> log.error("Database error finding user with role. ID: {}, Error: {}", idUser, error.getClass().getSimpleName(), error))
-                .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
+                .doOnNext(user -> log.info("User found: {} (Role: {})", user.getIdUser(), user.getRole().getType()))
+                .doOnError(error -> log.error("Database error finding user with role. ID: {}, Error: {}", idUser, error.getClass().getSimpleName(), error));
+
     }
 
     @Override
     public Mono<User> save(User user) {
-        return super.save(user)
-                .doOnSubscribe(sub -> log.info("Saving user - Name: {},  Role: {}", user.getFirstName(), user.getRole().getType()))
-                .doOnSuccess(savedUser -> log.info("User saved successfully - ID: {}, Name: {}, Role: {}", savedUser.getIdUser(), savedUser.getFirstName(), savedUser.getRole().getType()))
-                .doOnError(error -> log.error("Error saving user - Name: {}, Error: {}", user.getIdUser(), error.getClass().getSimpleName(), error))
-                .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
+        return repository.save(mapper.toEntity(user))
+                .doOnSubscribe(sub -> log.info("Saving user - Name: {},  Role: {}", user.getFirstName(), user.getRole().getIdRol()))
+                .map(mapper::dtoToDomain)
+                .doOnNext(savedUser -> log.info("User saved successfully - ID: {}, Name: {}", savedUser.getIdUser(), savedUser.getFirstName()))
+                .doOnError(error -> log.error("Error saving user - Name: {}, Error: {}", user.getIdUser(), error.getClass().getSimpleName(), error));
     }
 
     @Override
