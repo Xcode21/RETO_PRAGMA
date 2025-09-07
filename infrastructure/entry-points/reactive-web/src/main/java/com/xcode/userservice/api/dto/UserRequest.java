@@ -1,5 +1,6 @@
 package com.xcode.userservice.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class UserRequest {
 
     @NotNull(message = "Date of birth is required")
     @Past(message = "The date of birth must be before today")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     @NotBlank(message = "Address is required")

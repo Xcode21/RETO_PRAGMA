@@ -11,6 +11,7 @@ public enum ApiErrorCode {
     METHOD_NOT_ALLOWED("API_006", "HTTP method not allowed", HttpStatus.METHOD_NOT_ALLOWED),
     UNSUPPORTED_MEDIA_TYPE("API_007", "Unsupported content type", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
     NOT_ACCEPTABLE("API_008", "Unacceptable response format", HttpStatus.NOT_ACCEPTABLE),
+    FORMAT_JSON_NOT_ACCEPTABLE("API_009", "JSON parsing error", HttpStatus.NOT_ACCEPTABLE),
     RESOURCE_NOT_FOUND("API_404", "Resource not found", HttpStatus.NOT_FOUND),
     INTERNAL_SERVER_ERROR("API_999", "Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 
