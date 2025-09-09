@@ -20,5 +20,7 @@ public interface UserRepository extends ReactiveCrudRepository<UserEntity, UUID>
             "WHERE u.id = :id")
     Mono<UserWithRoleDto> findByIdWithRole(UUID idUser);
 
+    Mono<Boolean> existsByDocument(String document);
+
 
 }

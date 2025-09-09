@@ -1,7 +1,6 @@
 package com.xcode.userservice.r2dbc.repository.user;
 
 import com.xcode.userservice.model.user.User;
-import com.xcode.userservice.model.user.exception.UserNotFoundException;
 import com.xcode.userservice.r2dbc.entity.UserEntity;
 import com.xcode.userservice.r2dbc.exception.InfraErrorCode;
 import com.xcode.userservice.r2dbc.exception.InfrastructureException;
@@ -31,6 +30,7 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
 
     private final UserMapper mapper;
     private final TransactionalOperator txOperator;
+
     @Override
     public Mono<Boolean> existsByEmailAndDocument(String email, String document) {
         return repository.existsByEmailAndDocument(email, document)
@@ -46,8 +46,8 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
                 .doOnSubscribe(sub -> log.info("Finding user with role: {}", idUser))
                 .map(mapper::dtoToDomain)
                 .doOnNext(user -> log.info("User found: {} (Role: {})", user.getIdUser(), user.getRole().getType()))
-                .doOnError(error -> log.error("Database error finding user with role. ID: {}, Error: {}", idUser, error.getClass().getSimpleName(), error));
-
+                .doOnError(error -> log.error("Database error finding user with role. ID: {}, Error: {}", idUser, error.getClass().getSimpleName(), error))
+                .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
     }
 
     @Override
@@ -60,12 +60,16 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
-    public Mono<Boolean> existsByEmail(String email) {
-        return null;
+    public Mono<Boolean> existsByDocument(String document) {
+        return repository.existsByDocument(document)
+                .doOnSubscribe(sub -> log.info("Finding user - document: {}", document))
+                .doOnSuccess(result -> log.info("Exists? {} for document {}", result, document))
+                .doOnError(error -> log.error("Error querying DB for document: {}", document, error))
+                .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
     }
 
     @Override
-    public Mono<Boolean> existsByDocument(String document) {
+    public Mono<Boolean> existsByEmail(String email) {
         return null;
     }
 

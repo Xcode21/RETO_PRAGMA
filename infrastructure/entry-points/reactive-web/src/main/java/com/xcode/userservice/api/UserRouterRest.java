@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
@@ -21,10 +22,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @Configuration
 public class UserRouterRest {
 
-    @Bean(name = "userResources")
-    public WebProperties.Resources userResources() {
-        return new WebProperties.Resources();
-    }
+
     @Bean
     @RouterOperations({
             @RouterOperation(
@@ -82,6 +80,11 @@ public class UserRouterRest {
                     )
             )})
     public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler) {
-        return route(POST("/api/v1/users"), userHandler::createUser);
+        return RouterFunctions.route()
+                .path("/api/v1/users", builder -> builder
+                        .POST("", userHandler::createUser)
+                        .GET("/by-document/{document}", userHandler::validateUser)
+                )
+                .build();
     }
 }
