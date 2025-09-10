@@ -1,8 +1,10 @@
 package com.xcode.userservice.api.mapper;
 
+import com.xcode.userservice.api.dto.LoginRequest;
 import com.xcode.userservice.api.dto.UserRequest;
 import com.xcode.userservice.api.dto.UserResponse;
 import com.xcode.userservice.api.dto.UserValidationResponse;
+import com.xcode.userservice.model.auth.Login;
 import com.xcode.userservice.model.rol.Role;
 import com.xcode.userservice.model.user.User;
 import org.mapstruct.Mapper;
@@ -10,21 +12,12 @@ import org.mapstruct.Mapper;
 import java.time.LocalDateTime;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
-    default User requestToDomain(UserRequest request) {
+public interface LoginMapper {
+    default Login requestToDomain(LoginRequest request) {
         if (request == null) {
             return null;
         }
-        return User.createNew(
-                request.getFirstName(),
-                request.getLastName(),
-                request.getBirthDate(),
-                request.getAddress(),
-                request.getPhone(),
-                request.getEmail(),
-                request.getDocumento(),
-                request.getBaseSalary(),
-                Role.builder().idRol(request.getRol()).build(), request.getPassword());
+        return Login.of(request.getEmail(), request.getPassword());
     }
 
     default UserResponse domainToResponse(User user) {

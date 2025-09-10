@@ -79,11 +79,12 @@ public class UserRouterRest {
                             }
                     )
             )})
-    public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler) {
+    public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler,AuthHandler authHandler) {
         return RouterFunctions.route()
                 .path("/api/v1/users", builder -> builder
                         .POST("", userHandler::createUser)
                         .GET("/by-document/{document}", userHandler::validateUser)
+                        .POST("/login", authHandler::login)
                 )
                 .build();
     }

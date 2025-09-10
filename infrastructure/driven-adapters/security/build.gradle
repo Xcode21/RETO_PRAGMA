@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':model')
+    implementation 'org.springframework:spring-context'
+    // Spring Security
+    implementation 'org.springframework.security:spring-security-crypto'
+}

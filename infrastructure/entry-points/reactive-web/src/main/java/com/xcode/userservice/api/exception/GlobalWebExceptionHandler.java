@@ -336,8 +336,6 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
         response.getHeaders().add("Content-Type", "application/json");
 
         try {
-            //ObjectMapper objectMapper = new ObjectMapper();
-           // objectMapper.findAndRegisterModules();
             String jsonBody = objectMapper.writeValueAsString(body);
             log.debug("Serialized response: {}", jsonBody);
             DataBuffer buffer = response.bufferFactory().wrap(jsonBody.getBytes(StandardCharsets.UTF_8));

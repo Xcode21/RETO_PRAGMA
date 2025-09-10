@@ -44,7 +44,7 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     public Mono<User> findByIdWithRole(UUID idUser) {
         return repository.findByIdWithRole(idUser)
                 .doOnSubscribe(sub -> log.info("Finding user with role: {}", idUser))
-                .map(mapper::dtoToDomain)
+                .map(mapper:: dtoToDomain)
                 .doOnNext(user -> log.info("User found: {} (Role: {})", user.getIdUser(), user.getRole().getType()))
                 .doOnError(error -> log.error("Database error finding user with role. ID: {}, Error: {}", idUser, error.getClass().getSimpleName(), error))
                 .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
@@ -69,6 +69,15 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
+    public Mono<User> findByEmailWithRole(String email) {
+        return repository.userWithRoleEmail(email)
+                .doOnSubscribe(sub -> log.info("Finding user with email: {}", email))
+                .map(mapper::dtoToDomain)
+                .doOnError(error -> log.error("Error querying DB for email: {}", email, error))
+                .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
+    }
+
+    @Override
     public Mono<Boolean> existsByEmail(String email) {
         return null;
     }
@@ -83,9 +92,4 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
         return null;
     }
 
-
-    @Override
-    public Mono<User> findByEmailWithRole(String email) {
-        return null;
-    }
 }

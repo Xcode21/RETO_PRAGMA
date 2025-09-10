@@ -1,5 +1,6 @@
 package com.xcode.userservice.usecase.user;
 
+import com.xcode.userservice.model.auth.gateways.PasswordGateway;
 import com.xcode.userservice.model.rol.gateways.RoleRepository;
 import com.xcode.userservice.model.user.User;
 import com.xcode.userservice.model.user.exception.DomainErrorCode;
@@ -15,14 +16,22 @@ public class RegisterUserUseCase {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final TransactionalExecutor txExecutor;
+    private final PasswordGateway passwordGateway;
 
     public Mono<User> execute(User user) {
         return checkUserUniqueness(user)
                 .then(validateRoleExists(user.getRole().getIdRol()))
-                .then(userRepository.save(user))
+                .then(Mono.fromCallable(() -> encodePassword(user)))
+                .flatMap(userRepository::save)
                 .flatMap(savedUser -> userRepository.findByIdWithRole(savedUser.getIdUser())
                         .switchIfEmpty(Mono.error(new DomainException(DomainErrorCode.USER_NOT_FOUND))))
                 .as(txExecutor::executeInTransaction);
+    }
+
+    private User encodePassword(User user) {
+        return user.toBuilder()
+                .password(passwordGateway.encode(user.getPassword()))
+                .build();
     }
 
     private Mono<Void> checkUserUniqueness(User user) {

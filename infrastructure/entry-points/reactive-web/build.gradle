@@ -8,4 +8,11 @@ dependencies {
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
     implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    //spring-security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // JWT
+    implementation "io.jsonwebtoken:jjwt-api:$jwtVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:$jwtVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:$jwtVersion"
 }

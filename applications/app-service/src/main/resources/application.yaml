@@ -26,3 +26,6 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+jwt:
+  secret: mySecretKey123456789012345678901234567890
+  expiration: 3600

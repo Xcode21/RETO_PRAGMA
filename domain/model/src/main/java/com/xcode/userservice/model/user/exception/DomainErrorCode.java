@@ -2,6 +2,7 @@ package com.xcode.userservice.model.user.exception;
 
 public enum DomainErrorCode {
     INVALID_EMAIL("USR_001", "The email isn't valid", 400),
+    INVALID_CREDENTIALS("USR_007", "The credentials are not valid", 400),
     MISSING_REQUIRED_FIELD("USR_002", "The field is missing", 400),
     INVALID_SALARY("USR_003", "The salary is outside the allowed range.", 400),
     USER_ALREADY_EXISTS("USR_004", "The user already exists", 409),

@@ -57,10 +57,6 @@ public class UserHandler {
                     return dto.getDocument();
                 })
                 .flatMap(existByDocumentUserUseCase::execute)
-             /*   .flatMap(isValid -> ServerResponse
-                        .status(HttpStatus.OK)
-                        .bodyValue(ApiResponse.success("Usuario validado exitosamente", userMapper.buildSuccessResponse(document, isValid))));
-             */
                 .flatMap(isValid ->buildSuccessResponse(document, isValid))
                 .doOnError(error -> log.error("Error validating user with document: {}", document, error));
     }

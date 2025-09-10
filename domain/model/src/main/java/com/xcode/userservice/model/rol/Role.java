@@ -32,4 +32,11 @@ public class Role {
     public boolean isCliente() {
         return RolType.CLIENTE.equals(this.type);
     }
+    public static Role fromData(Integer idRol, RolType type, String description) {
+        return Role.builder()
+                .idRol(idRol)
+                .type(type)
+                .description(description)
+                .build();
+    }
 }

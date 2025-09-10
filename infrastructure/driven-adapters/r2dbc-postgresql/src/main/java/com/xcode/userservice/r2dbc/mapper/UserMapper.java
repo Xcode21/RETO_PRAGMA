@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
     public User dtoToDomain(UserWithRoleDto dto) {
-        if (dto == null) return null;
 
         Role rol = Role.builder()
                 .idRol(dto.idRol())
