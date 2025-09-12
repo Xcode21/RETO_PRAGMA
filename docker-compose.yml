@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # User Service
+  user-service:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile
+    container_name: user-service
+    ports:
+      - "8072:8072"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - ADAPTERS_R2DBC_HOST=postgres-users
+      - ADAPTERS_R2DBC_PORT=5432
+      - ADAPTERS_R2DBC_DATABASE=usersdb
+      - ADAPTERS_R2DBC_USERNAME=app
+      - ADAPTERS_R2DBC_PASSWORD=secret
+      - JWT_SECRET=mySecretKey123456789012345678901234567890
+      - JWT_EXPIRATION=3600
+    depends_on:
+      postgres-users:
+        condition: service_healthy
+    networks:
+      - pragma-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8072/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL Database for Users
+  postgres-users:
+    image: postgres:15-alpine
+    container_name: postgres-users
+    environment:
+      POSTGRES_DB: usersdb
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_users_data:/var/lib/postgresql/data
+      - ./deployment/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    networks:
+      - pragma-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d usersdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Application Service (external service running on host)
+  # This service connects to your existing microservice at localhost:8098
+  # No container needed since it's running externally
+
+volumes:
+  postgres_users_data:
+    driver: local
+
+networks:
+  pragma-network:
+    driver: bridge
+    name: pragma-network

@@ -1,0 +1,53 @@
+server:
+  port: 8072
+
+spring:
+  application:
+    name: "UserService"
+  devtools:
+    add-properties: false
+
+adapters:
+  r2dbc:
+    host: ${ADAPTERS_R2DBC_HOST:postgres-users}
+    port: ${ADAPTERS_R2DBC_PORT:5432}
+    database: ${ADAPTERS_R2DBC_DATABASE:usersdb}
+    schema: ${ADAPTERS_R2DBC_SCHEMA:public}
+    username: ${ADAPTERS_R2DBC_USERNAME:app}
+    password: ${ADAPTERS_R2DBC_PASSWORD:secret}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus,info"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+    info:
+      enabled: true
+
+cors:
+  allowed-origins: "http://localhost:4200,http://user-service:8072,http://host.docker.internal:8098"
+
+# External services configuration
+services:
+  application:
+    base-url: "http://host.docker.internal:8098"
+    health-endpoint: "/actuator/health"
+    api-endpoint: "/api/v1/application"
+
+jwt:
+  secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
+  expiration: ${JWT_EXPIRATION:3600}
+
+# Logging configuration for Docker
+logging:
+  level:
+    co.com.pragma: INFO
+    org.springframework.r2dbc: DEBUG
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{36} - %msg%n"
