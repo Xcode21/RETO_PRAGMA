@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.xcode.userservice.model.user.exception.DomainErrorCode;
 import com.xcode.userservice.model.user.exception.DomainException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -90,6 +92,24 @@ public class GlobalWebExceptionHandler implements WebExceptionHandler {
 
         if (ex instanceof ServerWebInputException) {
             return handleServerWebInputException(ex, path);
+        }
+        if (ex instanceof ExpiredJwtException) {
+            return CustomErrorResponse.builder()
+                    .code(TOKEN_EXPIRED.getCode())
+                    .message(TOKEN_EXPIRED.getDefaultMessage())
+                    .path(path)
+                    .statusCode(TOKEN_EXPIRED.getHttpStatus().value())
+                    .logLevel("warn")
+                    .build();
+        }
+        if (ex instanceof JwtException) {
+            return CustomErrorResponse.builder()
+                    .code(TOKEN_INVALID.getCode())
+                    .message(TOKEN_INVALID.getDefaultMessage())
+                    .path(path)
+                    .statusCode(TOKEN_INVALID.getHttpStatus().value())
+                    .logLevel("warn")
+                    .build();
         }
 
         if (ex instanceof CodecException) {

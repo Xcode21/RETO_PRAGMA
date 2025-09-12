@@ -44,8 +44,6 @@ public class RegisterUserUseCase {
     private Mono<Void> validateRoleExists(Integer roleId) {
         return roleRepository.findById(roleId)
                 .switchIfEmpty(Mono.error(new DomainException(DomainErrorCode.ROLE_NOT_FOUND)))
-                .filter(role -> role.isAdmin() || role.isAsesor())
-                .switchIfEmpty(Mono.error(new DomainException(DomainErrorCode.ROLE_NOT_ALLOWED)))
                 .then();
     }
 }
