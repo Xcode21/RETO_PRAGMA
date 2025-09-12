@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/api/v1/users/login").permitAll()
+                        .pathMatchers("/api/v1/users/salary").permitAll()
                         .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .pathMatchers("/api/v1/users").hasAnyRole("ADMIN", "ASESOR")

@@ -10,8 +10,10 @@ import lombok.extern.log4j.Log4j2;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.reactive.TransactionalOperator;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -40,6 +42,15 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
                 .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
     }
 
+    @Override
+    public Flux<User> findByEmailIn(Set<String> emails) {
+        return repository.findByEmailIn(emails)
+                .doOnSubscribe(sub -> log.info("Finding users - emails: {}", emails))
+                .map(mapper::dtoToDomain)
+                .doOnNext(user -> log.info("User found - email: {}, ID: {}", user.getEmail(), user.getIdUser()))
+                .doOnError(error -> log.error("Error querying DB for emails: {}, Error: {}", emails, error.getMessage(), error))
+                .onErrorMap(ex -> new InfrastructureException(InfraErrorCode.DATABASE_ERROR, ex));
+    }
     @Override
     public Mono<User> findByIdWithRole(UUID idUser) {
         return repository.findByIdWithRole(idUser)
@@ -82,10 +93,6 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
         return null;
     }
 
-    @Override
-    public Mono<User> findByEmail(String email) {
-        return null;
-    }
 
     @Override
     public Mono<User> findByDocument(String document) {

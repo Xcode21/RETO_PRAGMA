@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 public enum ApiErrorCode {
     VALIDATION_ERROR("API_001", "Error validation data", HttpStatus.BAD_REQUEST),
     REQUEST_BODY_REQUIRED("API_002", "Requests body is required", HttpStatus.BAD_REQUEST),
+    TOKEN_INVALID("API_010", "Invalid or expired token", HttpStatus.UNAUTHORIZED),
+    TOKEN_EXPIRED("API_011", "Token has expired", HttpStatus.UNAUTHORIZED),
     MAPPING_ERROR("API_003", "Error in data processing", HttpStatus.UNPROCESSABLE_ENTITY),
     DATABASE_CONNECTION_ERROR("API_004", "Database connection error", HttpStatus.SERVICE_UNAVAILABLE),
     DATA_INTEGRITY_ERROR("API_005", "The resource already exists or violates a restriction", HttpStatus.CONFLICT),

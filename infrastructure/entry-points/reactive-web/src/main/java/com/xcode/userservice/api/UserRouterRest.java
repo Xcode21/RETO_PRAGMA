@@ -84,6 +84,7 @@ public class UserRouterRest {
                 .path("/api/v1/users", builder -> builder
                         .POST("", userHandler::createUser)
                         .GET("/by-document/{document}", userHandler::validateUser)
+                        .POST("/salary", userHandler::findSalaryByEmail)
                         .POST("/login", authHandler::login)
                 )
                 .build();
