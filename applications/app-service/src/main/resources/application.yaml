@@ -27,5 +27,10 @@ management:
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 jwt:
-  secret: mySecretKey123456789012345678901234567890
+  secret: "mySecretKey123456789012345678901234567890"
   expiration: 3600
+adapter:
+  sqs:
+    region: "us-east-1"
+    queueUrl: "http://localhost:4566/000000000000/sample"
+    endpoint: "http://localhost:4566 # For localstack only"
